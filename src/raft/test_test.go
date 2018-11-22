@@ -104,11 +104,11 @@ func TestFailAgree(t *testing.T) {
 	cfg := make_config(t, servers, false)
 	defer cfg.cleanup()
 
-	fmt.Printf("Test: agreement despite follower failure ...\n")
+	fmt.Printf("Test: agreement despite Follower failure ...\n")
 
 	cfg.one(101, servers)
 
-	// follower network failure
+	// Follower network failure
 	leader := cfg.checkOneLeader()
 	cfg.disconnect((leader + 1) % servers)
 
@@ -233,7 +233,7 @@ loop:
 		}
 
 		failed := false
-		cmds := []int{}
+		var cmds []int
 		for index := range is {
 			cmd := cfg.wait(index, servers, term)
 			if ix, ok := cmd.(int); ok {
@@ -326,11 +326,11 @@ func TestBackup(t *testing.T) {
 	cfg := make_config(t, servers, false)
 	defer cfg.cleanup()
 
-	fmt.Printf("Test: leader backs up quickly over incorrect follower logs ...\n")
+	fmt.Printf("Test: leader backs up quickly over incorrect Follower logs ...\n")
 
 	cfg.one(rand.Int(), servers)
 
-	// put leader and one follower in a partition
+	// put leader and one Follower in a partition
 	leader1 := cfg.checkOneLeader()
 	cfg.disconnect((leader1 + 2) % servers)
 	cfg.disconnect((leader1 + 3) % servers)
@@ -356,7 +356,7 @@ func TestBackup(t *testing.T) {
 		cfg.one(rand.Int(), 3)
 	}
 
-	// now another partitioned leader and one follower
+	// now another partitioned leader and one Follower
 	leader2 := cfg.checkOneLeader()
 	other := (leader1 + 2) % servers
 	if leader2 == other {
@@ -433,7 +433,7 @@ loop:
 			// leader moved on really quickly
 			continue
 		}
-		cmds := []int{}
+		var cmds []int
 		for i := 1; i < iters+2; i++ {
 			x := int(rand.Int31())
 			cmds = append(cmds, x)
@@ -600,7 +600,7 @@ func TestPersist3(t *testing.T) {
 	cfg := make_config(t, servers, false)
 	defer cfg.cleanup()
 
-	fmt.Printf("Test: partitioned leader and one follower crash, leader restarts ...\n")
+	fmt.Printf("Test: partitioned leader and one Follower crash, leader restarts ...\n")
 
 	cfg.one(101, 3)
 
@@ -660,7 +660,7 @@ func TestFigure8(t *testing.T) {
 			ms := rand.Int63() % (int64(RaftElectionTimeout/time.Millisecond) / 2)
 			time.Sleep(time.Duration(ms) * time.Millisecond)
 		} else {
-			ms := (rand.Int63() % 13)
+			ms := rand.Int63() % 13
 			time.Sleep(time.Duration(ms) * time.Millisecond)
 		}
 
@@ -746,7 +746,7 @@ func TestFigure8Unreliable(t *testing.T) {
 			ms := rand.Int63() % (int64(RaftElectionTimeout/time.Millisecond) / 2)
 			time.Sleep(time.Duration(ms) * time.Millisecond)
 		} else {
-			ms := (rand.Int63() % 13)
+			ms := rand.Int63() % 13
 			time.Sleep(time.Duration(ms) * time.Millisecond)
 		}
 
@@ -794,7 +794,7 @@ func internalChurn(t *testing.T, unreliable bool) {
 		var ret []int
 		ret = nil
 		defer func() { ch <- ret }()
-		values := []int{}
+		var values []int
 		for atomic.LoadInt32(&stop) == 0 {
 			x := rand.Int()
 			index := -1
@@ -837,7 +837,7 @@ func internalChurn(t *testing.T, unreliable bool) {
 	}
 
 	ncli := 3
-	cha := []chan []int{}
+	var cha []chan []int
 	for i := 0; i < ncli; i++ {
 		cha = append(cha, make(chan []int))
 		go cfn(i, cha[i])
@@ -882,7 +882,7 @@ func internalChurn(t *testing.T, unreliable bool) {
 
 	atomic.StoreInt32(&stop, 1)
 
-	values := []int{}
+	var values []int
 	for i := 0; i < ncli; i++ {
 		vv := <-cha[i]
 		if vv == nil {
