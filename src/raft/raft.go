@@ -166,6 +166,7 @@ func (rf *Raft) RequestVote(args RequestVoteArgs, reply *RequestVoteReply) {
 	}
 
 	// the current server is older than the candidate
+	// TODO a server may vote for more than one server, may cause bug, need fix
 	if args.Term > rf.currentTerm {
 		rf.ResetTimer()
 
@@ -329,7 +330,7 @@ func (rf *Raft) StartElection() {
 					rf.voteCount += 1
 					rf.mu.Unlock()
 				} else {
-					DPrintf("something wrong in StartElection()")
+					// nothing to do, will not reach
 				}
 			}
 		}(i)
